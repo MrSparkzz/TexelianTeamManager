@@ -1,5 +1,7 @@
 package net.sparkzz.ttm;
 
+import net.sparkzz.ttm.Event.ButtonHandler;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -11,50 +13,44 @@ public class Frame extends JFrame {
 	private String TITLE = "Texelian Team Manager",
 					VERSION = "ALPHA-0.0.1";
 
-	// tabs: Fighters, Editor, Team Builder, Compare (Compare multiple fighters)
-	private final Font font = new Font("euphemia", Font.BOLD, 16);
-	private final JPanel[] tab = new JPanel[4];
-	private final JTabbedPane tabbedPane = new JTabbedPane();
-
+	private static Frame frame = null;
 	private GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 	private Dimension dimension = new Dimension(),
-						scrDimension = new Dimension(graphicsDevice.getDisplayMode().getWidth(), graphicsDevice.getDisplayMode().getHeight());
+			scrDimension = new Dimension(graphicsDevice.getDisplayMode().getWidth(), graphicsDevice.getDisplayMode().getHeight());
+
+	// tabs: Fighters, Editor, Team Builder, Compare (Compare multiple fighters)
+	public static final Font font = new Font("euphemia", Font.BOLD, 16);
+	public static final JPanel[] tab = new JPanel[4];
+	public static final JLabel info = new JLabel();
+	public static final JTabbedPane tabbedPane = new JTabbedPane();
 
 	public static void main(String args[]) {
-		Frame frame = new Frame();
+		frame = new Frame();
 	}
 
 	public Frame() {
 		initUI();
 
-		fighterTab();
-	}
-
-	// tab for all the fighters
-	private void fighterTab() {
-		JButton button = new JButton();
-
-		button.setFont(font);
-		button.setText("Update!");
-
-		tab[0].add(button);
+		FighterTab.init();
 	}
 
 	private void initUI() {
 		setTitle(TITLE + " " + VERSION);
 		setSize(dimensionBasedOnResolution());
 
+		dimension = dimensionBasedOnResolution();
+
 		getContentPane().add(tabbedPane);
 
-		int i = 0;
+		tab[0] = new FighterTab();
 
-		do {
-			tab[i] = new JPanel();
-
-			i++;
-		} while (i < 4);
+		info.setHorizontalAlignment(0);
+		info.setVerticalAlignment(0);
 
 		tabbedPane.add("Fighters", tab[0]);
+		tab[0].add(info);
+
+		validate();
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setLocation(scrDimension.width/2 - this.getWidth()/2, scrDimension.height/2 - this.getHeight()/2);
