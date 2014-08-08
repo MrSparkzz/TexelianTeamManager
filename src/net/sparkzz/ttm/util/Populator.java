@@ -49,13 +49,14 @@ public class Populator implements Runnable {
 			//fighter.setSEF(Integer.parseInt("sef"));
 			//fighter.setLvMAX(Integer.parseInt("maxlv"));
 
-			Writer.onScreenInfo("Got data for: " + elements.getValue("name"));
 			System.out.println("Got data for: " + elements.getValue("name"));
 
 			Frame.tab[0].repaint();
 
 			fighterList.add(fighter);
-			break;
+
+			i++;
+			if (i == 5) break;
 		}
 
 		SpreadsheetManager.setupFighterList(fighterList);

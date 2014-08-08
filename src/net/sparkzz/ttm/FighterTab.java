@@ -5,42 +5,25 @@ import net.sparkzz.ttm.util.Populator;
 import net.sparkzz.ttm.util.SpreadsheetManager;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
+import javax.swing.table.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by Brendon on 8/7/2014.
  */
 public class FighterTab extends JPanel {
 
-	public static List<Fighter> fighters = null;
+	private static HashMap<String, List<Object>> fighterData = new HashMap<String, List<Object>>();
+	private static List<Fighter> fighters = null;
 
 	public static JButton updateBtn = new JButton();
-	public static TableModel dataModel = new AbstractTableModel() {
-
-		@Override
-		public int getColumnCount() {
-			return 18;
-		}
-
-		@Override
-		public int getRowCount() {
-			return 1;
-		}
-
-		@Override
-		public Object getValueAt(int row, int col) {
-			return new Integer(row*col);
-		}
-	};
-	public static JTable table = new JTable(dataModel);
-	public static JScrollPane scrollPane = new JScrollPane(table);
-
-	public static String[] columnNames = {"Icon", "Name", "HP", "ATK", "DEF", "WIS",
-			"AGI", "Skill", "Skill Target", "Skill Target 2", "Skill Rank", "Cooldown",
-			"Class", "Sign", "SEF", "Minimum Level", "Maximum Level"};
-	public static Object[][] data;
+	public static JTable table;
 
 	public static void init() {
 		updateBtn.setFont(Frame.font);
@@ -55,36 +38,63 @@ public class FighterTab extends JPanel {
 
 		if (fighters.isEmpty()) {
 			System.out.println("Emptpy Fighter List!");
+			return;
 		}
 
 		int i = 0;
 
 		for (Fighter fighter : fighters) {
-			dataModel.setValueAt(fighter.getSprite(), i, 1);
-			dataModel.setValueAt(fighter.getName(), i, 2);
-			dataModel.setValueAt(fighter.getHP(), i, 3);
-			dataModel.setValueAt(fighter.getATK(), i, 4);
-			dataModel.setValueAt(fighter.getDEF(), i, 5);
-			dataModel.setValueAt(fighter.getWIS(), i, 6);
-			dataModel.setValueAt(fighter.getAGI(), i, 7);
-			dataModel.setValueAt(fighter.getSkill(), i, 8);
-			dataModel.setValueAt(fighter.getTarget(1), i, 9);
-			dataModel.setValueAt(fighter.getTarget(2), i, 10);
-			dataModel.setValueAt(fighter.getSkillRank(), i, 11);
-			dataModel.setValueAt(fighter.getCooldown(), i, 12);
-			dataModel.setValueAt(fighter.getFClass(), i, 13);
-			dataModel.setValueAt(fighter.getSign(), i, 14);
-			dataModel.setValueAt(fighter.getSEF(), i, 15);
-			dataModel.setValueAt(fighter.getLvMIN(), i, 16);
-			dataModel.setValueAt(fighter.getLvMAX(), i, 17);
-			//dataModel.setValueAt(fighter.get, i, 18);
-			//dataModel.setValueAt(fighter.get, i, 19);
-			i++;
+			List<Object> data = new ArrayList<Object>();
+
+			data.add(fighter.getHP());
+			data.add(fighter.getATK());
+			data.add(fighter.getDEF());
+			data.add(fighter.getWIS());
+			data.add(fighter.getAGI());
+			data.add(fighter.getSkill());
+			data.add(fighter.getTarget(1));
+			data.add(fighter.getTarget(2));
+			data.add(fighter.getSkillRank());
+			data.add(fighter.getCooldown());
+			data.add(fighter.getFClass());
+			data.add(fighter.getSign());
+			data.add(fighter.getSEF());
+			data.add(fighter.getLvMIN());
+			data.add(fighter.getLvMAX());
+
+			fighterData.put(fighter.getName(), data);
+
+			System.out.println("Added to list: " + fighter.getName());
 		}
 
-		table.updateUI();
+		fighters.clear();
 
-		Frame.tab[0].add(scrollPane);
+		table = new JTable(convertToTableModel(fighterData));
+		table.setSize(Frame.tab[0].getSize());
+
+		Frame.tab[0].add(table);
 		Frame.tab[0].revalidate();
+		Frame.tab[0].repaint();
+	}
+
+	public static TableModel convertToTableModel(HashMap<String, List<Object>> hashMap) {
+		DefaultTableModel model = new DefaultTableModel();
+
+		for (String name : hashMap.keySet()) {
+			List<Object> list = hashMap.get(name);
+
+			Vector vector = new Vector();
+
+			vector.add(name);
+
+			for (int i = 0; i < list.size(); i++) {
+				vector.add(list.get(i));
+				System.out.println(list.get(i));
+			}
+
+			model.addRow(vector);
+
+		}
+		return model;
 	}
 }
